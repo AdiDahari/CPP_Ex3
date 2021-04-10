@@ -16,7 +16,8 @@ namespace ariel
         NumberWithUnits(double v, string t) : val(v), type(t){};
         ~NumberWithUnits(){};
         static void read_units(ifstream &units_file);
-
+        double getVal() const { return val; };
+        string getType() const { return type; };
         friend NumberWithUnits operator+(const NumberWithUnits &n1);
         friend NumberWithUnits operator+(const NumberWithUnits &n1, const NumberWithUnits &n2);
         friend NumberWithUnits operator+=(NumberWithUnits &n1, const NumberWithUnits &n2);

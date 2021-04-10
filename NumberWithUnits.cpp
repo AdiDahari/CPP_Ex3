@@ -1,6 +1,7 @@
 #include "NumberWithUnits.hpp"
 #include <iostream>
 using namespace std;
+const double EPS = 0.00001;
 
 namespace ariel
 {
@@ -8,12 +9,35 @@ namespace ariel
 
     void NumberWithUnits::read_units(ifstream &units_file)
     {
-        double n1, n2;
-        string t1, t2, eq;
-        while (units_file >> n1 >> t1 >> eq >> n2 >> t2)
+        double val1 = 0;
+        double val2 = 0;
+        string type1;
+        string type2;
+        string eq;
+        while (units_file >> val1 >> type1 >> eq >> val2 >> type2)
         {
-            conv[t1][t2] = n2 / n1;
-            conv[t2][t1] = n1 / n2;
+            if (val1 == 0 || val2 == 0 || type1.empty() || type2.empty())
+            {
+                continue;
+            }
+            conv[type1][type2] = val2 / val1;
+            conv[type2][type1] = val1 / val2;
+            for (auto &p : conv[type2])
+            {
+                if (type1 != p.first)
+                {
+                    conv[type1][p.first] = p.second / (val1 / val2);
+                    conv[p.first][type1] = (val1 / val2) / p.second;
+                }
+            }
+            for (auto &p : conv[type1])
+            {
+                if (type2 != p.first)
+                {
+                    conv[type2][p.first] = p.second / (val1 * val2);
+                    conv[p.first][type2] = (val1 * val2) / p.second;
+                }
+            }
         }
     }
 
@@ -23,7 +47,7 @@ namespace ariel
     }
     NumberWithUnits operator+(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
-        double final_val;
+        double final_val = 0;
         if (n1.type == n2.type)
         {
             final_val = n1.val + n2.val;
@@ -65,7 +89,7 @@ namespace ariel
     }
     NumberWithUnits operator-(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
-        double final_val;
+        double final_val = 0;
         if (n1.type == n2.type)
         {
             final_val = n1.val - n2.val;
@@ -204,7 +228,8 @@ namespace ariel
         try
         {
             double r = conv.at(n2.type).at(n1.type);
-            return (n1.val == (r * n2.val));
+            // cout << n1.val << " == " << (r * n2.val) << endl;
+            return (abs(n1.val - (r * n2.val)) < EPS);
         }
         catch (const exception &e)
         {
