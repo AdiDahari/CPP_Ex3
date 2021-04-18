@@ -87,6 +87,28 @@ TEST_CASE("Boolean operations - Currency")
     CHECK(dollar != shekel);
     CHECK((shekel + dollar) == (4.33 * shekel));
 }
+
+TEST_CASE("Stream operations ( << , >> )")
+{
+    ifstream uf("units.txt");
+    NumberWithUnits::read_units(uf);
+    NumberWithUnits m(1, "m");
+    NumberWithUnits km(1, "km");
+    NumberWithUnits cm(1, "cm");
+    NumberWithUnits n(1, "m");
+    cout << cm << " < " << m << " < " << km << endl;
+    cout << 100 * 1000 * cm << " = " << 1000 * m << " = " << 1 * km << endl;
+    map<string, map<string, double>> table = NumberWithUnits::getTable();
+    for (auto &p : table)
+    {
+        string t = p.first;
+        double v = (abs(rand()) / 314200.00);
+        istringstream in{to_string(v) + "[" + t + "]"};
+        in >> n;
+        cout << n << ", ";
+    }
+    cout << endl;
+}
 TEST_CASE("Exceptions expected")
 {
     ifstream bad_units_file{"UNITS_WRONG.txt"};

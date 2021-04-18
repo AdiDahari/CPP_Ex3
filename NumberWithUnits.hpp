@@ -16,6 +16,7 @@ namespace ariel
         NumberWithUnits(double v, const string &t);
         ~NumberWithUnits(){};
         static void read_units(ifstream &units_file);
+        static map<string, map<string, double>> getTable();
         double getVal() const { return val; };
         string getType() const { return type; };
         friend NumberWithUnits operator+(const NumberWithUnits &n1);

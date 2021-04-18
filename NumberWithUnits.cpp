@@ -74,6 +74,10 @@ namespace ariel
         }
     }
 
+    map<string, map<string, double>> NumberWithUnits::getTable()
+    {
+        return conv;
+    }
     NumberWithUnits operator+(const NumberWithUnits &n)
     {
         return NumberWithUnits(n.val, n.type);
@@ -280,8 +284,11 @@ namespace ariel
     }
     istream &operator>>(istream &s, NumberWithUnits &n)
     {
-        string eq;
-        s >> n.val >> eq >> n.type;
+        char c = 0;
+        string t;
+        s >> n.val >> c >> t;
+        t.pop_back();
+        n.type = t;
         return s;
     }
 
