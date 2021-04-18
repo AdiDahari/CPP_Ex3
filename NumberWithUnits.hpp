@@ -13,7 +13,7 @@ namespace ariel
         string type;
 
     public:
-        NumberWithUnits(double v, string t) : val(v), type(t){};
+        NumberWithUnits(double v, const string &t);
         ~NumberWithUnits(){};
         static void read_units(ifstream &units_file);
         double getVal() const { return val; };

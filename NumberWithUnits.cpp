@@ -2,13 +2,46 @@
 #include <iostream>
 using namespace std;
 const double EPS = 0.00001;
+static map<string, map<string, double>> conv;
 
 namespace ariel
 {
-    static map<string, map<string, double>> conv;
 
+    NumberWithUnits::NumberWithUnits(double v, const string &t)
+    {
+        bool flag = false;
+        for (auto &p1 : conv)
+        {
+            if (flag)
+            {
+                break;
+            }
+
+            for (auto &p2 : p1.second)
+            {
+                if (t == p2.first)
+                {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        if (flag)
+        {
+            val = v;
+            type = t;
+        }
+        else
+        {
+            throw invalid_argument("Not a valid type of unit!");
+        }
+    }
     void NumberWithUnits::read_units(ifstream &units_file)
     {
+        if (units_file.fail())
+        {
+            throw invalid_argument("Could not open units file!");
+        }
         double val1 = 0;
         double val2 = 0;
         string type1;
@@ -187,6 +220,22 @@ namespace ariel
             throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
+    bool operator==(const NumberWithUnits &n1, const NumberWithUnits &n2)
+    {
+        if (n1.type == n2.type)
+        {
+            return (n1.val == n2.val);
+        }
+        try
+        {
+            double r = conv.at(n2.type).at(n1.type);
+            return (abs(n1.val - (r * n2.val)) < EPS);
+        }
+        catch (const exception &e)
+        {
+            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
+        }
+    }
     bool operator<=(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         if (n1.type == n2.type)
@@ -196,7 +245,7 @@ namespace ariel
         try
         {
             double r = conv.at(n2.type).at(n1.type);
-            return (n1.val <= (r * n2.val));
+            return ((n1.val < (r * n2.val) || n1 == n2));
         }
         catch (const exception &e)
         {
@@ -212,30 +261,14 @@ namespace ariel
         try
         {
             double r = conv.at(n2.type).at(n1.type);
-            return (n1.val >= (r * n2.val));
+            return ((n1.val > (r * n2.val) || n1 == n2));
         }
         catch (const exception &e)
         {
             throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
-    bool operator==(const NumberWithUnits &n1, const NumberWithUnits &n2)
-    {
-        if (n1.type == n2.type)
-        {
-            return (n1.val == n2.val);
-        }
-        try
-        {
-            double r = conv.at(n2.type).at(n1.type);
-            // cout << n1.val << " == " << (r * n2.val) << endl;
-            return (abs(n1.val - (r * n2.val)) < EPS);
-        }
-        catch (const exception &e)
-        {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
-        }
-    }
+
     bool operator!=(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         return !(n1 == n2);
