@@ -127,11 +127,10 @@ TEST_CASE("Exceptions expected")
     array<NumberWithUnits, 3> weights = {g, kg, ton};
     NumberWithUnits shekel(1, "ILS");
     NumberWithUnits dollar(1, "USD");
-    CHECK_THROWS(NumberWithUnits euro(1, "EUR"));
     CHECK_THROWS(NumberWithUnits cm_wrong(1, "Cm"));
     CHECK_THROWS(NumberWithUnits g_wrong(1, "G"));
     CHECK_THROWS(NumberWithUnits shekel_wrong(1, "ils"));
-    CHECK_THROWS(NumberWithUnits euro(1, "EUR"));
+    CHECK_THROWS(NumberWithUnits bad_unit(1, "BADUNIT"));
 
     array<NumberWithUnits, 2> currencies = {shekel, dollar};
     for (NumberWithUnits &l : lengths)
