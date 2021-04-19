@@ -96,16 +96,18 @@ TEST_CASE("Stream operations ( << , >> )")
     NumberWithUnits km(1, "km");
     NumberWithUnits cm(1, "cm");
     NumberWithUnits n(1, "m");
-    cout << cm << " < " << m << " < " << km << endl;
-    cout << 100 * 1000 * cm << " = " << 1000 * m << " = " << 1 * km << endl;
-    map<string, map<string, double>> table = NumberWithUnits::getTable();
+    cout << boolalpha;
+    cout << cm << " < " << m << " < " << km << "?: " << ((cm < m) && (m < km)) << endl;
+    cout << 100 * 1000 * cm << " = " << 1000 * m << " = " << 1 * km << "?: " << ((100 * 1000 * cm == 1 * km) && (1000 * m == 1 * km)) << endl;
+    unordered_map<string, unordered_map<string, double>> table = NumberWithUnits::getTable();
+    cout << "Random double for each unit in table:" << endl;
     for (auto &p : table)
     {
         string t = p.first;
         double v = (abs(rand()) / 314200.00);
         istringstream in{to_string(v) + "[" + t + "]"};
         in >> n;
-        cout << n << ", ";
+        cout << n << ", \n";
     }
     cout << endl;
 }

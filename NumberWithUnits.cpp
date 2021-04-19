@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 const double EPS = 0.00001;
-static map<string, map<string, double>> conv;
+static unordered_map<string, unordered_map<string, double>> conv;
 
 namespace ariel
 {
@@ -75,7 +75,7 @@ namespace ariel
         }
     }
 
-    map<string, map<string, double>> NumberWithUnits::getTable()
+    unordered_map<string, unordered_map<string, double>> NumberWithUnits::getTable()
     {
         return conv;
     }
@@ -301,7 +301,6 @@ namespace ariel
         {
             t.pop_back();
         };
-        cout << t << endl;
         n.type = t;
         return s;
     }

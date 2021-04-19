@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <map>
+#include <unordered_map>
 using namespace std;
 namespace ariel
 {
@@ -19,7 +19,7 @@ namespace ariel
 
         /* Read & Getters */
         static void read_units(ifstream &units_file);
-        static map<string, map<string, double>> getTable();
+        static unordered_map<string, unordered_map<string, double>> getTable();
         double getVal() const { return val; };
         string getType() const { return type; };
 
