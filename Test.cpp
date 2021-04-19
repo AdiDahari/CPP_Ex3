@@ -178,3 +178,36 @@ TEST_CASE("Exceptions expected")
         }
     }
 }
+
+TEST_CASE("Assignment Operators ( += , -= , *= )")
+{
+    ifstream uf("units.txt");
+    NumberWithUnits::read_units(uf);
+    NumberWithUnits cm(1, "cm");
+    NumberWithUnits m(1, "m");
+    NumberWithUnits km(1, "km");
+    NumberWithUnits n(1, "cm");
+    n += m;
+    n += km;
+    NumberWithUnits nn(1001.01, "m");
+    CHECK(n == nn);
+    n -= m;
+    n -= km;
+    CHECK(n == cm);
+
+    NumberWithUnits g(1, "g");
+    NumberWithUnits kg(1, "kg");
+    NumberWithUnits ton(1, "ton");
+    NumberWithUnits n1(1, "g");
+    n1 += kg;
+    n1 += ton;
+    NumberWithUnits nn1(1.001001, "ton");
+    CHECK(n1 == nn1);
+    n1 -= kg;
+    n1 -= ton;
+    CHECK(n1 == g);
+    n *= 100000;
+    n1 *= 1000000;
+    CHECK(n == km);
+    CHECK(n1 == ton);
+}
