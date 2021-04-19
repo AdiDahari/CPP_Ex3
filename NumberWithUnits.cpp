@@ -55,6 +55,7 @@ namespace ariel
             }
             conv[type1][type2] = val2 / val1;
             conv[type2][type1] = val1 / val2;
+
             for (auto &p : conv[type2])
             {
                 if (type1 != p.first)
@@ -78,10 +79,17 @@ namespace ariel
     {
         return conv;
     }
+
     NumberWithUnits operator+(const NumberWithUnits &n)
     {
         return NumberWithUnits(n.val, n.type);
     }
+
+    NumberWithUnits operator-(const NumberWithUnits &n)
+    {
+        return NumberWithUnits(-n.val, n.type);
+    }
+
     NumberWithUnits operator+(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         double final_val = 0;
@@ -102,28 +110,7 @@ namespace ariel
             throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
-    NumberWithUnits operator+=(NumberWithUnits &n1, const NumberWithUnits &n2)
-    {
-        if (n1.type == n2.type)
-        {
-            n1.val += n2.val;
-            return n1;
-        }
-        try
-        {
-            double r = conv.at(n2.type).at(n1.type);
-            n1.val += (r * n2.val);
-            return n1;
-        }
-        catch (const exception &e)
-        {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
-        }
-    }
-    NumberWithUnits operator-(const NumberWithUnits &n)
-    {
-        return NumberWithUnits(-n.val, n.type);
-    }
+
     NumberWithUnits operator-(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         double final_val = 0;
@@ -143,53 +130,71 @@ namespace ariel
             throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
-    NumberWithUnits operator-=(NumberWithUnits &n1, const NumberWithUnits &n2)
-    {
-        if (n1.type == n2.type)
-        {
-            n1.val -= n2.val;
-            return n1;
-        }
-        try
-        {
-            double r = conv.at(n2.type).at(n1.type);
-            n1.val -= (r * n2.val);
-            return n1;
-        }
-        catch (const exception &e)
-        {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
-        }
-    }
-
-    NumberWithUnits operator++(NumberWithUnits &n)
-    {
-        n.val += 1;
-        return n;
-    }
-    NumberWithUnits operator--(NumberWithUnits &n)
-    {
-        n.val += 1;
-        return n;
-    }
 
     NumberWithUnits operator*(const NumberWithUnits &n1, double n2)
     {
         return NumberWithUnits(n1.val * n2, n1.type);
     }
+
     NumberWithUnits operator*(double n1, const NumberWithUnits &n2)
     {
         return NumberWithUnits(n2.val * n1, n2.type);
     }
-    NumberWithUnits operator*=(NumberWithUnits &n1, double n2)
+
+    NumberWithUnits &NumberWithUnits::operator++()
     {
-        n1.val *= n2;
-        return n1;
+        this->val += 1;
+        return *this;
     }
-    NumberWithUnits operator*=(double n1, NumberWithUnits &n2)
+
+    NumberWithUnits &NumberWithUnits::operator--()
     {
-        n2.val *= n2;
-        return n2;
+        this->val -= 1;
+        return *this;
+    }
+
+    NumberWithUnits &NumberWithUnits::operator+=(const NumberWithUnits &n)
+    {
+        if (this->type == n.type)
+        {
+            this->val += n.val;
+            return *this;
+        }
+        try
+        {
+            double r = conv.at(n.type).at(this->type);
+            this->val += (r * n.val);
+            return *this;
+        }
+        catch (const exception &e)
+        {
+            throw std::invalid_argument("Units do not match - [" + n.type + "] cannot be converted to [" + this->type + "]");
+        }
+    }
+
+    NumberWithUnits &NumberWithUnits::operator-=(const NumberWithUnits &n)
+    {
+        if (this->type == n.type)
+        {
+            this->val -= n.val;
+            return *this;
+        }
+        try
+        {
+            double r = conv.at(n.type).at(this->type);
+            this->val -= (r * n.val);
+            return *this;
+        }
+        catch (const exception &e)
+        {
+            throw std::invalid_argument("Units do not match - [" + n.type + "] cannot be converted to [" + this->type + "]");
+        }
+    }
+
+    NumberWithUnits &NumberWithUnits::operator*=(double n2)
+    {
+        this->val *= n2;
+        return *this;
     }
 
     bool operator<(const NumberWithUnits &n1, const NumberWithUnits &n2)
@@ -205,9 +210,10 @@ namespace ariel
         }
         catch (const exception &e)
         {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
+            throw std::invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
+
     bool operator>(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         if (n1.type == n2.type)
@@ -221,9 +227,10 @@ namespace ariel
         }
         catch (const exception &e)
         {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
+            throw std::invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
+
     bool operator==(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         if (n1.type == n2.type)
@@ -237,9 +244,10 @@ namespace ariel
         }
         catch (const exception &e)
         {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
+            throw std::invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
+
     bool operator<=(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         if (n1.type == n2.type)
@@ -253,9 +261,10 @@ namespace ariel
         }
         catch (const exception &e)
         {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
+            throw std::invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
+
     bool operator>=(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         if (n1.type == n2.type)
@@ -269,7 +278,7 @@ namespace ariel
         }
         catch (const exception &e)
         {
-            throw invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
+            throw std::invalid_argument("Units do not match - [" + n2.type + "] cannot be converted to [" + n1.type + "]");
         }
     }
 
@@ -282,12 +291,17 @@ namespace ariel
     {
         return (s << n.val << "[" + n.type + "]");
     }
+
     istream &operator>>(istream &s, NumberWithUnits &n)
     {
         char c = 0;
         string t;
-        s >> n.val >> c >> t;
-        t.pop_back();
+        s >> n.val >> c >> t >> c;
+        if (t[t.length() - 1] == ']')
+        {
+            t.pop_back();
+        };
+        cout << t << endl;
         n.type = t;
         return s;
     }
