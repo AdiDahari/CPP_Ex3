@@ -9,8 +9,8 @@ namespace ariel
     class NumberWithUnits
     {
     private:
-        double val;
-        string type;
+        double _val;
+        string _type;
 
     public:
         /* Constructor & Destructor */
@@ -20,8 +20,8 @@ namespace ariel
         /* Read & Getters */
         static void read_units(ifstream &units_file);
         static unordered_map<string, unordered_map<string, double>> getTable();
-        double getVal() const { return val; };
-        string getType() const { return type; };
+        double getVal() const { return _val; };
+        string getType() const { return _type; };
 
         /* Unary Operators */
         friend NumberWithUnits operator+(const NumberWithUnits &n);
