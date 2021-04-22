@@ -36,6 +36,8 @@ namespace ariel
         /* Mathematic Operators - Same Object */
         NumberWithUnits &operator++();
         NumberWithUnits &operator--();
+        NumberWithUnits operator++(int);
+        NumberWithUnits operator--(int);
         NumberWithUnits &operator+=(const NumberWithUnits &n);
         NumberWithUnits &operator-=(const NumberWithUnits &n);
         NumberWithUnits &operator*=(double n);

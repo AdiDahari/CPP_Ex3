@@ -210,4 +210,12 @@ TEST_CASE("Assignment Operators ( += , -= , *= )")
     n1 *= 1000000;
     CHECK(n == km);
     CHECK(n1 == ton);
+    n++;
+    n1++;
+    CHECK((n > km && n >= km && n != km));
+    CHECK((n1 > ton && n1 >= ton && n1 != ton));
+    CHECK(n++ < n);
+    CHECK(++n == n);
+    CHECK(n-- > n);
+    CHECK(--n == n);
 }

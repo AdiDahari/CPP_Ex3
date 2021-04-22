@@ -152,6 +152,17 @@ namespace ariel
         this->val -= 1;
         return *this;
     }
+    NumberWithUnits NumberWithUnits::operator++(int)
+    {
+        NumberWithUnits n(this->val++, this->type);
+        return n;
+    }
+
+    NumberWithUnits NumberWithUnits::operator--(int)
+    {
+        NumberWithUnits n(this->val--, this->type);
+        return n;
+    }
 
     NumberWithUnits &NumberWithUnits::operator+=(const NumberWithUnits &n)
     {
@@ -235,7 +246,7 @@ namespace ariel
     {
         if (n1.type == n2.type)
         {
-            return (n1.val == n2.val);
+            return (abs(n1.val - n2.val) < EPS);
         }
         try
         {
@@ -296,13 +307,27 @@ namespace ariel
     {
         char c = 0;
         string t;
-        s >> n.val >> c >> t >> c;
+        double v = 0;
+        s >> v >> c >> t >> c;
         if (t[t.length() - 1] == ']')
         {
             t.pop_back();
-        };
-        n.type = t;
-        return s;
+        }
+        if (c == '-')
+        {
+            s.putback('-');
+        }
+        try
+        {
+            conv.at(t);
+            n.val = v;
+            n.type = t;
+            return s;
+        }
+        catch (const exception &e)
+        {
+            throw std::invalid_argument(t + " is not a valid unit!");
+        }
     }
 
 }
