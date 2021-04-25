@@ -1,12 +1,30 @@
+/**
+ * NumberWithUnits implementation cpp file.
+ * This file holds the operator overloading of:
+ * - Unary operators: ( +a, -a ).
+ * - Mathematic operators: ( a++, a--, ++a, --a, a + b, a - b, a * x, a += b, a -= b, a *= b ).
+ * - Boolean operators: ( a < b, a > b, a <= b, a >= b, a != b, a == b ).
+ * - Stream operators: ( output << a, input >> a )
+ * (given a, b objects of class NumberWithUnits, x int, output ostream and input istream).
+ * Note: each operation on objects depends on a given units file, which contains all possible convertion between units, such as:
+ * 1 km = 1000 m
+ * 1 m = 100 cm
+ * each binary operation can be executed only if both units are of the same type or have a convertion rate.
+ * 
+ * @author Adi Dahari
+ * @since 2021-04
+ * */
 #include "NumberWithUnits.hpp"
 #include <iostream>
 using namespace std;
 const double EPS = 0.00001;
+/*This map holds the convertion rates this way: type1 -> type2 -> rate(double) */
 static unordered_map<string, unordered_map<string, double>> conv;
 
 namespace ariel
 {
 
+    /* Constructor */
     NumberWithUnits::NumberWithUnits(double v, const string &t)
     {
         bool flag = false;
@@ -36,6 +54,8 @@ namespace ariel
             throw invalid_argument("Not a valid type of unit!");
         }
     }
+
+    /* Read units from file (as described) */
     void NumberWithUnits::read_units(ifstream &units_file)
     {
         if (units_file.fail())
@@ -56,6 +76,7 @@ namespace ariel
             conv[type1][type2] = val2 / val1;
             conv[type2][type1] = val1 / val2;
 
+            //Next two loops are for complex covertions such as: cm -> m -> km
             for (auto &p : conv[type2])
             {
                 if (type1 != p.first)
@@ -80,6 +101,7 @@ namespace ariel
         return conv;
     }
 
+    /* Unary Operators */
     NumberWithUnits operator+(const NumberWithUnits &n)
     {
         return NumberWithUnits(n._val, n._type);
@@ -90,6 +112,7 @@ namespace ariel
         return NumberWithUnits(-n._val, n._type);
     }
 
+    /* Binary Operators */
     NumberWithUnits operator+(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         double final_val = 0;
@@ -101,7 +124,7 @@ namespace ariel
 
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             final_val = n1._val + (r * n2._val);
             return NumberWithUnits(final_val, n1._type);
         }
@@ -121,7 +144,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             final_val = n1._val - (r * n2._val);
             return NumberWithUnits(final_val, n1._type);
         }
@@ -141,6 +164,7 @@ namespace ariel
         return NumberWithUnits(n2._val * n1, n2._type);
     }
 
+    /* Increment / Decrement Operators */
     NumberWithUnits &NumberWithUnits::operator++()
     {
         this->_val += 1;
@@ -173,7 +197,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n._type).at(this->_type);
+            double r = conv.at(n._type).at(this->_type); // If one or both of given types are not in units file - exception expected.
             this->_val += (r * n._val);
             return *this;
         }
@@ -192,7 +216,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n._type).at(this->_type);
+            double r = conv.at(n._type).at(this->_type); // If one or both of given types are not in units file - exception expected.
             this->_val -= (r * n._val);
             return *this;
         }
@@ -208,6 +232,7 @@ namespace ariel
         return *this;
     }
 
+    /* Boolean Operators */
     bool operator<(const NumberWithUnits &n1, const NumberWithUnits &n2)
     {
         if (n1._type == n2._type)
@@ -216,7 +241,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             return (n1._val < (r * n2._val));
         }
         catch (const exception &e)
@@ -233,7 +258,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             return (n1._val > (r * n2._val));
         }
         catch (const exception &e)
@@ -250,7 +275,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             return (abs(n1._val - (r * n2._val)) < EPS);
         }
         catch (const exception &e)
@@ -267,7 +292,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             return ((n1._val < (r * n2._val) || n1 == n2));
         }
         catch (const exception &e)
@@ -284,7 +309,7 @@ namespace ariel
         }
         try
         {
-            double r = conv.at(n2._type).at(n1._type);
+            double r = conv.at(n2._type).at(n1._type); // If one or both of given types are not in units file - exception expected.
             return ((n1._val > (r * n2._val) || n1 == n2));
         }
         catch (const exception &e)
@@ -298,9 +323,10 @@ namespace ariel
         return !(n1 == n2);
     }
 
+    /* Stream Operators */
     ostream &operator<<(ostream &s, const NumberWithUnits &n)
     {
-        return (s << n._val << "[" + n._type + "]");
+        return (s << n._val << "[" + n._type + "]"); //Streams the Number like this: <number>[<unit>]
     }
 
     istream &operator>>(istream &s, NumberWithUnits &n)

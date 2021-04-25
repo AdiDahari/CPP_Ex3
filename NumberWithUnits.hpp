@@ -6,6 +6,9 @@
 using namespace std;
 namespace ariel
 {
+    /*This class represent a unit with a value.*/
+    /*Each unit made of this class holds 2 members: _val, _type. It's value is double and it's type is string*/
+
     class NumberWithUnits
     {
     private:
@@ -23,11 +26,11 @@ namespace ariel
         double getVal() const { return _val; };
         string getType() const { return _type; };
 
-        /* Unary Operators */
+        /* Unary Operators - friendly */
         friend NumberWithUnits operator+(const NumberWithUnits &n);
         friend NumberWithUnits operator-(const NumberWithUnits &n);
 
-        /* Mathematic Operators - New Object */
+        /* Mathematic Operators - New Object - friendly */
         friend NumberWithUnits operator+(const NumberWithUnits &n1, const NumberWithUnits &n2);
         friend NumberWithUnits operator-(const NumberWithUnits &n1, const NumberWithUnits &n2);
         friend NumberWithUnits operator*(const NumberWithUnits &n1, double n2);
@@ -42,7 +45,7 @@ namespace ariel
         NumberWithUnits &operator-=(const NumberWithUnits &n);
         NumberWithUnits &operator*=(double n);
 
-        /* Boolean Operators */
+        /* Boolean Operators - friendly */
         friend bool operator<(const NumberWithUnits &n1, const NumberWithUnits &n2);
         friend bool operator>(const NumberWithUnits &n1, const NumberWithUnits &n2);
         friend bool operator<=(const NumberWithUnits &n1, const NumberWithUnits &n2);
@@ -50,7 +53,7 @@ namespace ariel
         friend bool operator==(const NumberWithUnits &n1, const NumberWithUnits &n2);
         friend bool operator!=(const NumberWithUnits &n1, const NumberWithUnits &n2);
 
-        /* Stream Operators */
+        /* Stream Operators - friendly */
         friend ostream &operator<<(ostream &s, const NumberWithUnits &n);
         friend istream &operator>>(istream &s, NumberWithUnits &n);
     };
